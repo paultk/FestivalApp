@@ -1,6 +1,8 @@
 package com.example.paulthomaskorsvold.festivalappclean.home_screen;
 
 
+import android.content.Context;
+
 import com.example.paulthomaskorsvold.festivalappclean.utils.BasePresenter;
 import com.example.paulthomaskorsvold.festivalappclean.utils.BaseView;
 
@@ -9,13 +11,13 @@ import com.example.paulthomaskorsvold.festivalappclean.utils.BaseView;
  */
 
 public interface HomeScreenContract {
-    public interface Presenter extends BasePresenter {
+    interface Presenter extends BasePresenter {
+
+        void redirectToActivity(int id);
 
     }
 
-    public interface View extends BaseView<Presenter> {
-
-        void redirectToActivity(int id);
+    interface View extends BaseView<Presenter> {
     }
 
 }

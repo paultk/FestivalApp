@@ -16,17 +16,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 
 
 import com.example.paulthomaskorsvold.festivalappclean.R;
 import com.example.paulthomaskorsvold.festivalappclean.models.ChecklistItem;
 import com.example.paulthomaskorsvold.festivalappclean.utils.database_utils.ChecklistProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+/*
+* Activity for Reminders
+*/
 public class CheckListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ChecklistItemAdapter.ChecklistItemClickListener{
     private enum DB_ACTION {
         DELETE, INSERT, UPDATE
@@ -39,13 +37,11 @@ public class CheckListActivity extends AppCompatActivity implements LoaderManage
     private ChecklistItemAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
-    private EditText mNewChecklistItemText;
-
     //Constants used when calling the detail activity
     public static final int REQUESTCODE = 2;
 
 
-
+//  Implementation to use swiping
     ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
 //        Swipe down or up, moves the checklistItems
@@ -54,7 +50,7 @@ public class CheckListActivity extends AppCompatActivity implements LoaderManage
             mAdapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
             return true;
         }
-
+//        Sideways swipe to delete
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
 
@@ -98,6 +94,7 @@ public class CheckListActivity extends AppCompatActivity implements LoaderManage
 
     }
 
+    /** gets the result from the ChecklistFormActivity and performs the intended db action*/
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -107,19 +104,19 @@ public class CheckListActivity extends AppCompatActivity implements LoaderManage
                 checklistItem = new ChecklistItem(
                         id, data.getStringExtra(ChecklistItem.KEY_DESCRIPTION),
                         new java.util.Date().toString(), data.getStringExtra(ChecklistItem.KEY_TITLE),
-                        "New"
+                        getString(R.string.new_)
                 );
                 if(id < 0) {
-                    insertOrAddChecklistItem(checklistItem, DB_ACTION.INSERT);
+                    insertOrUpdateChecklistItem(checklistItem, DB_ACTION.INSERT);
                 } else {
-                    checklistItem.setmStatus("Updated");
-                    insertOrAddChecklistItem(checklistItem, DB_ACTION.UPDATE);
+                    checklistItem.setmStatus(getString(R.string.updated));
+                    insertOrUpdateChecklistItem(checklistItem, DB_ACTION.UPDATE);
                 }
                 Log.d(M_TAG, checklistItem.toString());
         }
     }
 
-//    Short click = update
+      /** Short click = update */
     @Override
     public void ChecklistItemOnClick(ChecklistItem checklistItem, int position) {
 
@@ -173,7 +170,8 @@ public class CheckListActivity extends AppCompatActivity implements LoaderManage
         Log.d(M_TAG, "uri:\t" + uri);
     }*/
 
-    private void insertOrAddChecklistItem(ChecklistItem checklistItem, DB_ACTION dbAction) {
+    /** adds or updates ChecklistItem*/
+    private void insertOrUpdateChecklistItem(ChecklistItem checklistItem, DB_ACTION dbAction) {
 
         ContentValues values = new ContentValues();
 

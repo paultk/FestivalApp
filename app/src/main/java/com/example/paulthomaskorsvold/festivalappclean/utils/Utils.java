@@ -9,6 +9,13 @@ import android.content.DialogInterface;
  */
 
 public class Utils {
+
+    /**
+     * method showing a dialog with yes no buttons
+     * @param title
+     * @param message
+     * @param context
+     */
     public static void showConfirmDialog(String title, String message, Context context) {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
         builder.setTitle(title);
@@ -36,6 +43,12 @@ public class Utils {
 
     }
 
+    /**
+     * Displays modal with content, used for showing list items.
+     * @param message
+     * @param title
+     * @param context
+     */
     public static void showModal(String message, String title, Context context) {
         // 1. Instantiate an AlertDialog.Builder with its constructor
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

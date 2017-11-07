@@ -1,6 +1,7 @@
 package com.example.paulthomaskorsvold.festivalappclean.home_screen;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,8 +26,8 @@ import java.util.List;
 
 import static com.example.paulthomaskorsvold.festivalappclean.utils.Utils.showModal;
 
-public class HomeScreenActivity extends AppCompatActivity {
-    private static final java.lang.String M_TAG = "HomeScreenActivity";
+public class HomeScreenActivity extends AppCompatActivity implements HomeScreenContract.View {
+    private static final String M_TAG = "HomeScreenActivity";
 
     private ImageView mCheckList, mMicrophone, mNavigation, mPayment, mSettings, mWeather;
     private ListView mNotificationListView;
@@ -41,11 +42,52 @@ public class HomeScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         ActionBar actionBar = getActionBar();
+        setPresenter();
+        initializeViews();
 
-        init();
     }
 
-    private void init() {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.home_screen_menu, menu);
+        menu.findItem(R.id.action_search).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Log.d(M_TAG, "search clicked");
+
+                return false;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Log.d(M_TAG, "title" + item.getTitle());
+
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                Log.i(M_TAG, "search clicked");
+                return true;
+            case R.id.festival_name:
+                Log.d(M_TAG, "festival name clicked");
+                //// TODO: 9/27/17 implement search logic here.
+                return true;
+            default:
+                return true;
+        }
+
+    }
+
+    @Override
+    public void setPresenter() {
+        mPresenter = new HomeScreenPresenter(this);
+    }
+
+    @Override
+    public void initializeViews() {
         mStrings = new ArrayList<Notification>();
         mStrings.add(new Notification("Pink floyd starting in 10 minutes", "Stage 3, 15:30"));
         mStrings.add(new Notification("Red hot chili peppers is canceled", "No new information"));
@@ -73,78 +115,15 @@ public class HomeScreenActivity extends AppCompatActivity {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    redirectToActivity(imageView.getId());
+                    mPresenter.redirectToActivity(imageView.getId());
                 }
             });
         }
 
-
-        /*mCheckList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(M_TAG, "mChecklist Clicked");
-                redirectToActivity(mCheckList.getId());
-            }
-        });*/
-    }
-
-    private void redirectToActivity(int id) {
-        Class intentClass = null;
-
-        switch(id) {
-
-            case R.id.checklist:
-                intentClass = CheckListActivity.class;
-                break;
-            case R.id.navigation:
-                intentClass = MapsActivity.class;
-                break;
-            case R.id.payment:
-                intentClass = PaymentActivity.class;
-            default:
-                break;
-
-        }
-        if (intentClass != null) {
-            Intent intent = new Intent(HomeScreenActivity.this, intentClass);
-            startActivity(intent);
-        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_screen_menu, menu);
-        menu.findItem(R.id.action_search).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                Log.d(M_TAG, "search clicked");
-
-                return false;
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Log.d(M_TAG, "title" + item.getTitle());
-
-
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                Log.i(M_TAG, "search clicked");
-                return true;
-            case R.id.festival_name:
-                Log.d(M_TAG, "festival name clicked");
-                //// TODO: 9/27/17 implement search logic here.
-
-                return true;
-            default:
-
-
-                return true;
-        }
-
+    public Context getContext() {
+        return getApplicationContext();
     }
 }

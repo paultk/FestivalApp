@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 /**
  * Created by paulthomaskorsvold on 10/17/17.
+ *
  */
 
 public class PagerAdapter extends FragmentStatePagerAdapter{

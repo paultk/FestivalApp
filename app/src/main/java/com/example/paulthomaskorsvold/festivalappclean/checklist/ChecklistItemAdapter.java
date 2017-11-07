@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.example.paulthomaskorsvold.festivalappclean.R;
 import com.example.paulthomaskorsvold.festivalappclean.models.ChecklistItem;
 
+import static android.provider.Settings.Global.getString;
+
 public class ChecklistItemAdapter extends RecyclerView.Adapter<ChecklistItemAdapter.ViewHolder>  {
     private Cursor mCursor;
     private ChecklistItemClickListener mChecklistItemClickListener;
@@ -86,10 +88,6 @@ public class ChecklistItemAdapter extends RecyclerView.Adapter<ChecklistItemAdap
         holder.mDateAdded.setText(CHECKLISTITEM.getmDateCreated());
         holder.mDescription.setText(CHECKLISTITEM.getmDescription());
 
-        Log.d("Adapter", "title: " + CHECKLISTITEM.getmTitle() + "Date: " + CHECKLISTITEM.getmDateCreated() + "\nDescription"
-                + CHECKLISTITEM.getmDescription()
-        );
-
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,14 +95,6 @@ public class ChecklistItemAdapter extends RecyclerView.Adapter<ChecklistItemAdap
                 mChecklistItemClickListener.ChecklistItemOnClick(CHECKLISTITEM, position);
             }
         });
-
-        /*holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                mChecklistItemClickListener.ChecklistItemOnLongClick(CHECKLISTITEM, position);
-                return true;
-            }
-        });*/
 
     }
 

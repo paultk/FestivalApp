@@ -11,7 +11,9 @@ import android.widget.Toast;
 
 import com.example.paulthomaskorsvold.festivalappclean.R;
 import com.example.paulthomaskorsvold.festivalappclean.models.ChecklistItem;
-
+/**
+ * Activity for Checklist form
+ */
 public class ChecklistFormActivity extends AppCompatActivity {
 
     private Button mAddButton;
@@ -51,7 +53,7 @@ public class ChecklistFormActivity extends AppCompatActivity {
                     setResult(Activity.RESULT_OK, resultIntent);
                     finish();
                 } else {
-                    Toast.makeText(getBaseContext(), "Enter text", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), R.string.enter_text, Toast.LENGTH_LONG).show();
                 }
             }
         });

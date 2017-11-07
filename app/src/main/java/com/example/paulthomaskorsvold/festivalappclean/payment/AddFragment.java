@@ -21,6 +21,9 @@ import java.util.ArrayList;
 
 import static com.example.paulthomaskorsvold.festivalappclean.utils.Utils.showModal;
 
+/**
+ * Fragment for "Adding funds" and displaying previous transaction history
+ */
 
 public class AddFragment extends Fragment {
 
@@ -49,7 +52,6 @@ public class AddFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 showModal(mTransactionHistoryList.get(i), "Previous transaction", getContext());
-                Log.d(M_TAG, "item clicked\n" + mTransactionHistoryList.get(i));
             }
         });
 
@@ -57,36 +59,14 @@ public class AddFragment extends Fragment {
         mAddFundsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(M_TAG, "mAddFundsButton clicked");
                 openChrome();
             }
         });
     }
 
-    /*
-    *    mStrings = new ArrayList<Notification>();
-        mStrings.add(new Notification("Pink floyd starting in 10 minutes", "Stage 3, 15:30"));
-        mStrings.add(new Notification("Red hot chili peppers is canceled", "No new information"));
-        mStrings.add(new Notification("Oasis starts in 1 hour", "Stage 1, 22:20"));
-        mStrings.add(new Notification("Thunderstorm incoming", "All festival area"));
-        mNotificationListView = (ListView) findViewById(R.id.notification_listView);
-        mNotificationListAdapter = new ArrayAdapter<Notification>(this, R.layout.support_simple_spinner_dropdown_item, mStrings);
-        mNotificationListView.setAdapter(mNotificationListAdapter);
-        mNotificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showModal(mStrings.get(i).mBody, mStrings.get(i).mTitle, HomeScreenActivity.this);
-                Log.d(M_TAG, "item clicked\n" + mStrings.get(i));
-            }
-        });
-*/
-
-    private void init(ViewGroup container) {
-
-
-    }
-
-
+    /**
+     * Opens a Google chrome window
+     */
     private void openChrome() {
         try {
             Intent i = new Intent("android.intent.action.MAIN");

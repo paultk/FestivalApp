@@ -32,6 +32,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Displays a map, depending on the Action called by MapsActivity, the map is either for displaying a saved location or adding a new one.
+ */
+
+
 public class NavigationActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final String M_TAG = "NavigationActivity";
@@ -80,6 +85,7 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
             Log.d(M_TAG, e.getMessage());
         }
 
+//        Hide the inputfield if the ACTION_CODE is VIEWING
         if (mIsViewing) {
             mNameEditText.setVisibility(View.GONE);
         }
@@ -88,19 +94,23 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
 
 
     private String showCityName(double latitude, double longitude) {
-        String cityName = "*No City*";
+        String cityName = getString(R.string.no_city);
         Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
         List<Address> addresses;
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
             cityName = addresses.get(0).getLocality();
         } catch (Exception e) {
-            Toast.makeText(NavigationActivity.this, "No city could be found", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(NavigationActivity.this, "No city could be found", Toast.LENGTH_SHORT).show();
         }
 
         return cityName;
     }
 
+    /**
+     * Add new marker to map
+     * @param latLng
+     */
     private void addMarker(LatLng latLng) {
         mMap.clear();
         mMarker = mMap.addMarker(new MarkerOptions()
@@ -110,68 +120,6 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
                 .draggable(false)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
     }
-
-    private void deletePlace() {
-        /*getContentResolver().delete(PlacesProvider.CONTENT_URI, mPlaceFilter, null);
-        Toast.makeText(PlaceDetailActivity.this, "Place deleted", Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);
-        finish();*/
-    }
-
-    private void updatePlace(Place place) {
-        /*ContentValues values = new ContentValues();
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_NAME, place.getName());
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_CITY, place.getCity());
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_LATITUDE, place.getLatitude());
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_LONGITUDE, place.getLongitude());
-        getContentResolver().update(PlacesProvider.CONTENT_URI, values, mPlaceFilter, null);
-        Toast.makeText(PlaceDetailActivity.this, "Place updated", Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);*/
-    }
-
-    private void insertPlace(Place place) {
-        /*ContentValues values = new ContentValues();
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_NAME, place.getName());
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_CITY, place.getCity());
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_LATITUDE, place.getLatitude());
-        values.put(PlacesContract.PlaceEntry.COLUMN_NAME_LONGITUDE, place.getLongitude());
-        getContentResolver().insert(PlacesProvider.CONTENT_URI, values);
-        Toast.makeText(PlaceDetailActivity.this, "Place added", Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);*/
-    }
-
-    private void finishEditing() {
-        // get the string from the EditText and set it in the object
-        String name = mNameEditText.getText().toString().trim();
-        mPlace.setName(name);
-        switch (mAction) {
-            case Intent.ACTION_INSERT:
-                if (name.length() == 0) {
-                    setResult(RESULT_CANCELED);
-                } else {
-                    insertPlace(mPlace);
-                }
-                break;
-            case Intent.ACTION_EDIT:
-                if (name.length() == 0) {
-                    deletePlace();
-                } else {
-                    updatePlace(mPlace);
-                }
-        }
-
-        finish();
-    }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -205,7 +153,7 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
                 mPlace.setLongitude(mMarker.getPosition().longitude);
                 mPlace.setName(mNameEditText.getText().toString());
                 mPlace.setCity(showCityName(mPlace.getLatitude(), mPlace.getLongitude()));
-                Log.d(M_TAG, "place\n" + mPlace);
+                Log.d(M_TAG, getString(R.string.place) + mPlace);
 
                 if (!mIsViewing) {
                     showDialog(mPlace);
@@ -270,8 +218,8 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
 
     private void showDialog(Place place) {
         android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(NavigationActivity.this);
-        builder1.setTitle("Confirm");
-        builder1.setMessage("Are you sure you want to add place\n" + place.getName());
+        builder1.setTitle(R.string.confirm);
+        builder1.setMessage(getString(R.string.confirmation) + place.getName());
         builder1.setCancelable(true);
 
         builder1.setPositiveButton(
@@ -288,7 +236,7 @@ public class NavigationActivity extends AppCompatActivity implements OnMapReadyC
                 });
 
         builder1.setNegativeButton(
-                "No",
+                R.string.no,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

@@ -13,6 +13,9 @@ import android.widget.Toast;
 import com.example.paulthomaskorsvold.festivalappclean.R;
 import com.example.paulthomaskorsvold.festivalappclean.home_screen.HomeScreenActivity;
 
+/**
+ * Simple login activity with hardcoded username and password
+ */
 public class LoginActivity extends AppCompatActivity implements LoginContract.View {
 
     private static final String M_TAG = "LoginActivity";

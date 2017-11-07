@@ -5,7 +5,5 @@ package com.example.paulthomaskorsvold.festivalappclean.utils;
  */
 
 public interface BasePresenter {
-    public void start();
-
 
 }

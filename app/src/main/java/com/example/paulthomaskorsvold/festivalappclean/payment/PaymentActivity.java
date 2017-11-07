@@ -21,9 +21,9 @@ public class PaymentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_payment_with_fragments);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Pay"));
-        tabLayout.addTab(tabLayout.newTab().setText("Add Funds"));
-        tabLayout.addTab(tabLayout.newTab().setText("Split"));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.pay));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.add_funds));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.split));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);

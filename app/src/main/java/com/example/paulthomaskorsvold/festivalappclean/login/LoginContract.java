@@ -1,7 +1,5 @@
 package com.example.paulthomaskorsvold.festivalappclean.login;
 
-import android.content.Context;
-
 import com.example.paulthomaskorsvold.festivalappclean.utils.BasePresenter;
 import com.example.paulthomaskorsvold.festivalappclean.utils.BaseView;
 
@@ -11,7 +9,11 @@ import com.example.paulthomaskorsvold.festivalappclean.utils.BaseView;
 
 public interface LoginContract  {
     public interface Presenter extends BasePresenter {
-        public void checkUsernameAndPassword(String username, String password);
+        boolean checkUsernameAndPassword(String username, String password);
+
+        void redirectToActivity();
+
+        boolean validate(String username, String password);
 
     }
 

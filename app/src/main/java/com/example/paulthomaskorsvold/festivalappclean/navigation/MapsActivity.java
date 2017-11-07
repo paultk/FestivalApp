@@ -22,6 +22,7 @@ import static com.example.paulthomaskorsvold.festivalappclean.utils.Utils.showMo
 
 /**
  * Created by paulthomaskorsvold on 11/5/17.
+ * First screen to the map activity, displays a list of saved places
  */
 
 public class MapsActivity extends AppCompatActivity {
@@ -30,14 +31,8 @@ public class MapsActivity extends AppCompatActivity {
     private List<Place> mSavedPlacesList;
     private ArrayAdapter<Place> mSavedPlacesAdapter;
 
-    private String testString;
-
-//    private
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        testString = "something";
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -77,25 +72,12 @@ public class MapsActivity extends AppCompatActivity {
         });
     }
 
+    /** Retrieve the result from the NavigationActivity and add it to saved places(mSavedPlacesList)*/
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-
-        for (Place place :
-                mSavedPlacesList) {
-            Log.d(M_TAG, "item:\t" + place.toString());
-        }
-        Log.d(M_TAG, "here???");
-        Log.d(M_TAG, testString);
-
         if (resultCode == RESULT_OK) {
-//            try {
-                for (Place place :
-                        mSavedPlacesList) {
-                    Log.d(M_TAG, "item:\t" + place.toString());
-                }
-            Log.d(M_TAG, "here2");
-
+            try {
             Place newPlace = (Place) data.getExtras()
                         .getSerializable(NavigationActivity.PLACE);
 //                mSavedPlacesAdapter.clear();
@@ -105,10 +87,9 @@ public class MapsActivity extends AppCompatActivity {
             mSavedPlacesListView.setAdapter(mSavedPlacesAdapter);
 
                 mSavedPlacesAdapter.notifyDataSetChanged();
-
-//            } catch (Exception e) {
-//                Log.d(M_TAG, e.getMessage());
-//            }
+            } catch (Exception e) {
+                Log.d(M_TAG, e.getMessage());
+            }
         }
     }
 }

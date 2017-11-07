@@ -23,6 +23,7 @@ import com.example.paulthomaskorsvold.festivalappclean.models.ChecklistItem;
 public class ChecklistProvider extends ContentProvider {
 
     private static final String M_TAG = "ChecklistProvider";
+    static final String UNKNOWN_URI = "Unknown uri";
 
     public enum DbMethod{
         DELETE, INSERT, UPDATE
@@ -57,6 +58,7 @@ public class ChecklistProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+//        Where the db gets initiated or retrieved
         mDBHelper = new DBHelper(getContext());
         return true;
     }
@@ -80,7 +82,7 @@ public class ChecklistProvider extends ContentProvider {
                 );
                 break;
             default:
-                throw new UnsupportedOperationException("unknown uri" + uri);
+                throw new UnsupportedOperationException(UNKNOWN_URI + uri);
         }
 
         returnCursor = queryBuilder.query(mDBHelper.getReadableDatabase(),
@@ -124,7 +126,7 @@ public class ChecklistProvider extends ContentProvider {
                 Log.d(M_TAG, "id: " + id);
                 break;
             default:
-                throw new IllegalArgumentException("unknown uri" + uri);
+                throw new IllegalArgumentException(UNKNOWN_URI + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return rowsDeleted;
@@ -146,23 +148,30 @@ public class ChecklistProvider extends ContentProvider {
                 );
                 break;
             default:
-                throw new IllegalArgumentException("unknown uri" + uri);
+                throw new IllegalArgumentException(UNKNOWN_URI + uri);
 
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
 
+    /**
+     * Wrapper method
+     * @param dbMethod
+     * @param uri
+     * @param contentValues
+     * @return
+     */
     private long dbMethod(DbMethod dbMethod, @NonNull Uri uri, @Nullable ContentValues contentValues) {
         int uriType = S_URI_MATCHER.match(uri);
         mDb = mDBHelper.getWritableDatabase();
-        long id = 0;
+        long id;
         switch (uriType) {
             case CHECKLIST_ITEMS:
                 id = mDb.insert(CHECKLIST_ITEM_TABLE, null, contentValues);
                 break;
             default:
-                throw new IllegalArgumentException("unknown uri" + uri);
+                throw new IllegalArgumentException(UNKNOWN_URI + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return id;

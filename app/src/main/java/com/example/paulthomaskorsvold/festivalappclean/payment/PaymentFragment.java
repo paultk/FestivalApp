@@ -61,6 +61,9 @@ import java.util.concurrent.TimeUnit;
 
 import static com.example.paulthomaskorsvold.festivalappclean.utils.Utils.showConfirmDialog;
 
+/**
+ * Just a simple fragment displaying camera
+ */
 public class PaymentFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 

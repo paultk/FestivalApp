@@ -14,7 +14,7 @@
     <item
         android:id="@+id/festival_name"
 
-        android:title="@string/festival_name"
+        android:title="@string/festival_app"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_search"
