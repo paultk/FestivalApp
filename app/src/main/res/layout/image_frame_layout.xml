@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/lineup"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            app:srcCompat="@drawable/microphone"
+            android:layout_marginStart="31dp"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:id="@+id/navigation"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            app:srcCompat="@drawable/navigation"
+            android:layout_alignTop="@+id/lineup"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="31dp" />
+
+        <ImageView
+            android:id="@+id/settings"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            app:srcCompat="@drawable/settings"
+            android:layout_centerVertical="true"
+            android:layout_alignStart="@+id/lineup" />
+
+        <ImageView
+            android:id="@+id/weather"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            app:srcCompat="@drawable/weather_icon"
+            android:layout_alignTop="@+id/settings"
+            android:layout_alignStart="@+id/navigation" />
+
+        <ImageView
+            android:id="@+id/payment"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginTop="14dp"
+            app:srcCompat="@drawable/payment_icon"
+            android:layout_below="@+id/weather"
+            android:layout_alignEnd="@+id/settings" />
+
+        <ImageView
+            android:id="@+id/checklist"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            app:srcCompat="@drawable/checklist"
+            android:layout_alignTop="@+id/payment"
+            android:layout_alignStart="@+id/weather" />
+    </RelativeLayout>
+</FrameLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+
+    <!--<item-->
+        <!--android:id="@+id/search_user"-->
+        <!--android:actionViewClass="android.widget.SearchView"-->
+        <!--android:icon="@android:drawable/ic_menu_search"-->
+        <!--android:showAsAction="ifRoom|collapseActionView"-->
+        <!--android:title="Search Users"/>-->
+
+    <item
+        android:id="@+id/festival_name"
+
+        android:title="@string/festival_name"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title=""
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom" />
+
+
+
+</menu>
