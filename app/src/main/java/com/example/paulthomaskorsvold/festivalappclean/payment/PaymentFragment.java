@@ -52,12 +52,7 @@ import android.widget.Toast;
 
 import com.example.paulthomaskorsvold.festivalappclean.R;
 import com.example.paulthomaskorsvold.festivalappclean.utils.api.RemoteServiceImplementation;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveClient;
-import com.google.android.gms.drive.DriveResourceClient;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -93,11 +88,6 @@ public class PaymentFragment extends Fragment
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
-
-    private GoogleSignInClient mGoogleSignInClient;
-    private DriveClient mDriveClient;
-    private DriveResourceClient mDriveResourceClient;
-    private Bitmap mBitmapToSave;
 
     public static String API_KEY = "AIzaSyBS_AGMqgbguYPbQ0PlTbnZpxvff4dkG3c";
     public static String CLIENT_ID = "47321494894-nr8k7qs6uuu7ina5qtc2rig46p7l3ndp.apps.googleusercontent.com";
@@ -472,8 +462,6 @@ public class PaymentFragment extends Fragment
         super.onActivityCreated(savedInstanceState);
         mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
         mRemoteService = RemoteServiceImplementation.getInstance();
-
-        signIn();
 
     }
 
@@ -879,7 +867,6 @@ public class PaymentFragment extends Fragment
                     Log.d(TAG, mFile.toString());
 
 
-
                     unlockFocus();
 
                     Log.d(M_TAG, "Starting to request");
@@ -938,7 +925,6 @@ public class PaymentFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.pay_button: {
-
 
 
                 takePicture();
@@ -1147,6 +1133,7 @@ public class PaymentFragment extends Fragment
                     .create();
         }
     }
+}
 
 
 
@@ -1157,36 +1144,48 @@ public class PaymentFragment extends Fragment
 
 
 
+/*
 
 
+    private static final String TAG = "drive-quickstart";
+    private static final int REQUEST_CODE_SIGN_IN = 0;
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
+    private static final int REQUEST_CODE_CREATOR = 2;
 
+    private GoogleSignInClient mGoogleSignInClient;
+    private DriveClient mDriveClient;
+    private DriveResourceClient mDriveResourceClient;
+    private Bitmap mBitmapToSave;
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        signIn();
+    }
 
+    */
+/** Start sign in activity. *//*
 
-
-    /** Start sign in activity. */
     private void signIn() {
         Log.i(TAG, "Start sign in");
         mGoogleSignInClient = buildGoogleSignInClient();
-        startActivity(mGoogleSignInClient.getSignInIntent());
-
-//        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
     }
 
-   //** Build a Google SignIn client. *//*
+    */
+/** Build a Google SignIn client. *//*
+
     private GoogleSignInClient buildGoogleSignInClient() {
         GoogleSignInOptions signInOptions =
                 new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestScopes(Drive.SCOPE_FILE)
                         .build();
-        return GoogleSignIn.getClient(getContext(), signInOptions);
+        return GoogleSignIn.getClient(this, signInOptions);
     }
 
-    /*
+    */
+/** Create a new file and save it to Drive. *//*
 
-
-
-    *//** Create a new file and save it to Drive. *//*
     private void saveFileToDrive() {
         // Start by creating a new contents, and setting a callback.
         Log.i(TAG, "Creating new contents.");
@@ -1210,10 +1209,12 @@ public class PaymentFragment extends Fragment
                         });
     }
 
-    *//**
+    */
+/**
      * Creates an {@link IntentSender} to start a dialog activity with configured {@link
      * CreateFileActivityOptions} for user to create a new photo in Drive.
      *//*
+
     private Task<Void> createFileIntentSender(DriveContents driveContents, Bitmap image) {
         Log.i(TAG, "New contents created.");
         // Get an output stream for the contents.
@@ -1294,5 +1295,6 @@ public class PaymentFragment extends Fragment
                 }
                 break;
         }
-    }*/
+    }
 }
+*/

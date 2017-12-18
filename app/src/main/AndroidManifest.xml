@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.paulthomaskorsvold.festivalappclean">
 
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -48,14 +49,23 @@
             android:authorities="com.example.paulthomaskorsvold.festivalappclean" />
 
         <activity android:name=".login.LoginActivity" >
+
+        </activity>
+        <activity android:name=".payment.PaymentActivity"
+            android:theme="@style/Theme.AppCompat.Light">
+
+            <meta-data android:name="com.google.android.apps.drive.APP_ID" android:value="id=festivalapp-189421" />
             <intent-filter>
+                <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <data android:mimeType="application/vnd.google-apps.drive-sdk.1234567890" />
+                <data android:mimeType="image/png" />
+                <data android:mimeType="image/jpeg" />
+                <data android:mimeType="image/jpg" />
             </intent-filter>
         </activity>
-        <activity android:name=".payment.PaymentActivity"
-            android:theme="@style/Theme.AppCompat.Light"/>
         <activity android:name=".navigation.NavigationActivity">
 
 
