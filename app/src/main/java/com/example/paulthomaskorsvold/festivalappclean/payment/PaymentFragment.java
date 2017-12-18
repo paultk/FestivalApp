@@ -6,8 +6,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -28,7 +31,9 @@ import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -46,18 +51,35 @@ import android.widget.Toast;
 
 
 import com.example.paulthomaskorsvold.festivalappclean.R;
+import com.example.paulthomaskorsvold.festivalappclean.utils.api.RemoteServiceImplementation;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveClient;
+import com.google.android.gms.drive.DriveResourceClient;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.paulthomaskorsvold.festivalappclean.utils.Utils.showConfirmDialog;
 
@@ -67,9 +89,20 @@ import static com.example.paulthomaskorsvold.festivalappclean.utils.Utils.showCo
 public class PaymentFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
+    private static final String M_TAG = "PaymentFragment";
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
+
+    private GoogleSignInClient mGoogleSignInClient;
+    private DriveClient mDriveClient;
+    private DriveResourceClient mDriveResourceClient;
+    private Bitmap mBitmapToSave;
+
+    public static String API_KEY = "AIzaSyBS_AGMqgbguYPbQ0PlTbnZpxvff4dkG3c";
+    public static String CLIENT_ID = "47321494894-nr8k7qs6uuu7ina5qtc2rig46p7l3ndp.apps.googleusercontent.com";
+
+    private RemoteServiceImplementation.RemoteService mRemoteService;
 
     private int mBalance;
 
@@ -419,6 +452,7 @@ public class PaymentFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
@@ -437,6 +471,10 @@ public class PaymentFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+        mRemoteService = RemoteServiceImplementation.getInstance();
+
+        signIn();
+
     }
 
     @Override
@@ -839,7 +877,17 @@ public class PaymentFragment extends Fragment
                                                @NonNull TotalCaptureResult result) {
                     showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
+
+
+
                     unlockFocus();
+
+                    Log.d(M_TAG, "Starting to request");
+                    try {
+                        sendRequest(mFile);
+                    } catch (Exception e) {
+                        Log.d(M_TAG, e.getMessage());
+                    }
                 }
             };
 
@@ -890,8 +938,12 @@ public class PaymentFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.pay_button: {
+
+
+
                 takePicture();
-                showConfirmDialog("Confirmation", "Are you sure you want to pay 30$");
+
+//                showConfirmDialog("Confirmation", "Are you sure you want to pay 30$");
                 break;
             }
             case R.id.info: {
@@ -905,6 +957,37 @@ public class PaymentFragment extends Fragment
                 break;
             }
         }
+    }
+
+    private void sendRequest(File file) {
+        Call<Map<String, String>> call = mRemoteService.postImage(file);
+
+        call.enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(
+                    final Call<Map<String, String>> call,
+                    final Response<Map<String, String>> response) {
+                final Map<String, String> tasks = response.body();
+                if (tasks != null && !tasks.isEmpty()) {
+//                    getView().showLoadedItems(tasks);
+
+                    Log.d(M_TAG, "onResponse: tasks found as map with size: " + tasks.size());
+                    for (Object item : tasks.values()) {
+                        Log.d(M_TAG, item.toString());
+                    }
+                } else {
+                    Log.d(M_TAG, "onResponse: no tasks found");
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    final Call<Map<String, String>> call,
+                    final Throwable t) {
+//                getView().showErrorLoading();
+                Log.e(M_TAG, "onResume: failed to find SensorData", t);
+            }
+        });
     }
 
     private void showConfirmDialog(String title, String message) {
@@ -1065,4 +1148,151 @@ public class PaymentFragment extends Fragment
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /** Start sign in activity. */
+    private void signIn() {
+        Log.i(TAG, "Start sign in");
+        mGoogleSignInClient = buildGoogleSignInClient();
+        startActivity(mGoogleSignInClient.getSignInIntent());
+
+//        startActivityForResult(mGoogleSignInClient.getSignInIntent(), REQUEST_CODE_SIGN_IN);
+    }
+
+   //** Build a Google SignIn client. *//*
+    private GoogleSignInClient buildGoogleSignInClient() {
+        GoogleSignInOptions signInOptions =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestScopes(Drive.SCOPE_FILE)
+                        .build();
+        return GoogleSignIn.getClient(getContext(), signInOptions);
+    }
+
+    /*
+
+
+
+    *//** Create a new file and save it to Drive. *//*
+    private void saveFileToDrive() {
+        // Start by creating a new contents, and setting a callback.
+        Log.i(TAG, "Creating new contents.");
+        final Bitmap image = mBitmapToSave;
+
+        mDriveResourceClient
+                .createContents()
+                .continueWithTask(
+                        new Continuation<DriveContents, Task<Void>>() {
+                            @Override
+                            public Task<Void> then(@NonNull Task<DriveContents> task) throws Exception {
+                                return createFileIntentSender(task.getResult(), image);
+                            }
+                        })
+                .addOnFailureListener(
+                        new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Failed to create new contents.", e);
+                            }
+                        });
+    }
+
+    *//**
+     * Creates an {@link IntentSender} to start a dialog activity with configured {@link
+     * CreateFileActivityOptions} for user to create a new photo in Drive.
+     *//*
+    private Task<Void> createFileIntentSender(DriveContents driveContents, Bitmap image) {
+        Log.i(TAG, "New contents created.");
+        // Get an output stream for the contents.
+        OutputStream outputStream = driveContents.getOutputStream();
+        // Write the bitmap data from it.
+        ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, bitmapStream);
+        try {
+            outputStream.write(bitmapStream.toByteArray());
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to write file contents.", e);
+        }
+
+        // Create the initial metadata - MIME type and title.
+        // Note that the user will be able to change the title later.
+        MetadataChangeSet metadataChangeSet =
+                new MetadataChangeSet.Builder()
+                        .setMimeType("image/jpeg")
+                        .setTitle("Android Photo.png")
+                        .build();
+        // Set up options to configure and display the create file activity.
+        CreateFileActivityOptions createFileActivityOptions =
+                new CreateFileActivityOptions.Builder()
+                        .setInitialMetadata(metadataChangeSet)
+                        .setInitialDriveContents(driveContents)
+                        .build();
+
+        return mDriveClient
+                .newCreateFileActivityIntentSender(createFileActivityOptions)
+                .continueWith(
+                        new Continuation<IntentSender, Void>() {
+                            @Override
+                            public Void then(@NonNull Task<IntentSender> task) throws Exception {
+                                startIntentSenderForResult(task.getResult(), REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                                return null;
+                            }
+                        });
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_CODE_SIGN_IN:
+                Log.i(TAG, "Sign in request code");
+                // Called after user is signed in.
+                if (resultCode == RESULT_OK) {
+                    Log.i(TAG, "Signed in successfully.");
+                    // Use the last signed in account here since it already have a Drive scope.
+                    mDriveClient = Drive.getDriveClient(this, GoogleSignIn.getLastSignedInAccount(this));
+                    // Build a drive resource client.
+                    mDriveResourceClient =
+                            Drive.getDriveResourceClient(this, GoogleSignIn.getLastSignedInAccount(this));
+                    // Start camera.
+                    startActivityForResult(
+                            new Intent(MediaStore.ACTION_IMAGE_CAPTURE), REQUEST_CODE_CAPTURE_IMAGE);
+                }
+                break;
+            case REQUEST_CODE_CAPTURE_IMAGE:
+                Log.i(TAG, "capture image request code");
+                // Called after a photo has been taken.
+                if (resultCode == Activity.RESULT_OK) {
+                    Log.i(TAG, "Image captured successfully.");
+                    // Store the image data as a bitmap for writing later.
+                    mBitmapToSave = (Bitmap) data.getExtras().get("data");
+                    saveFileToDrive();
+                }
+                break;
+            case REQUEST_CODE_CREATOR:
+                Log.i(TAG, "creator request code");
+                // Called after a file is saved to Drive.
+                if (resultCode == RESULT_OK) {
+                    Log.i(TAG, "Image successfully saved.");
+                    mBitmapToSave = null;
+                    // Just start the camera again for another photo.
+                    startActivityForResult(
+                            new Intent(MediaStore.ACTION_IMAGE_CAPTURE), REQUEST_CODE_CAPTURE_IMAGE);
+                }
+                break;
+        }
+    }*/
 }
