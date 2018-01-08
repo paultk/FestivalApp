@@ -1,6 +1,10 @@
 package com.example.paulthomaskorsvold.festivalappclean.utils.api;
 
+import com.example.paulthomaskorsvold.festivalappclean.models.Location;
+import com.example.paulthomaskorsvold.festivalappclean.models.SensorReading;
+
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -15,6 +19,7 @@ import retrofit2.http.POST;
  */
 
 public class RemoteServiceImplementation {
+    private static final String M_SERVER_URL = "https://mobile-infrastructure.herokuapp.com";
     private static final String M_API_KEY = "AIzaSyA8dElCwTXRza-lBp_TXpabS_hra5Bxgxc";
     private static String ip = "10.30.0.145";
     private static final String M_BASE_URL = "http://" + ip + ":3000";
@@ -29,7 +34,7 @@ public class RemoteServiceImplementation {
     }
 
     private static Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(M_BASE_URL)
+            .baseUrl(M_SERVER_URL)
             .addConverterFactory(GsonConverterFactory.create()) // use gson converter
             .build();
 
@@ -44,10 +49,10 @@ public class RemoteServiceImplementation {
         Call<Map<String, SensorData>> getLastSensorData(); // c*/
 
         @GET("/")
-        Call<Map<String, String>> testLocal();
+        Call<List<Location>> testLocal();
 
         @POST("/")
-        Call<Map<String, String>> postImage(@Body File file);
+        Call<List<Location>> postSensorReading(@Body SensorReading sensorReading);
 
     }
 

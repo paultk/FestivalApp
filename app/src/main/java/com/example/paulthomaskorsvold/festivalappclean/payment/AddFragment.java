@@ -16,8 +16,16 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.paulthomaskorsvold.festivalappclean.R;
+import com.example.paulthomaskorsvold.festivalappclean.models.Location;
+import com.example.paulthomaskorsvold.festivalappclean.models.SensorReading;
+import com.example.paulthomaskorsvold.festivalappclean.utils.api.RemoteServiceImplementation;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.paulthomaskorsvold.festivalappclean.utils.Utils.showModal;
 
@@ -33,6 +41,9 @@ public class AddFragment extends Fragment {
     private final String M_TAG = "AddFragment";
     private Button mAddFundsButton;
     private static final String url = "http://visa.nl";
+
+    private RemoteServiceImplementation.RemoteService mRemoteService;
+
 
 
     @Override
@@ -59,9 +70,20 @@ public class AddFragment extends Fragment {
         mAddFundsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openChrome();
+//                openChrome();
+                try {
+                    sendRequest();
+                } catch (Exception e) {
+                    Log.d(M_TAG, e.getMessage());
+                }
             }
         });
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstance) {
+        super.onActivityCreated(savedInstance);
+        mRemoteService = RemoteServiceImplementation.getInstance();
     }
 
     /**
@@ -80,5 +102,37 @@ public class AddFragment extends Fragment {
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(i);
         }
+    }
+
+    private void sendRequest() {
+        SensorReading s = new SensorReading(-1, -1, "someUser");
+        Call<List <Location>> call = mRemoteService.postSensorReading(s);
+
+        call.enqueue(new Callback<List<Location>>() {
+            @Override
+            public void onResponse(
+                    final Call<List<Location>> call,
+                    final Response<List<Location>> response) {
+                final List<Location> tasks = response.body();
+                if (tasks != null && !tasks.isEmpty()) {
+//                    getView().showLoadedItems(tasks);
+
+                    Log.d(M_TAG, "onResponse: tasks found as map with size: " + tasks.size());
+                    for (Location location: tasks) {
+                        Log.d(M_TAG, location.toString());
+                    }
+                } else {
+                    Log.d(M_TAG, "onResponse: no tasks found");
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    final Call<List<Location>> call,
+                    final Throwable t) {
+//                getView().showErrorLoading();
+                Log.e(M_TAG, "onResume: failed to que request", t);
+            }
+        });
     }
 }

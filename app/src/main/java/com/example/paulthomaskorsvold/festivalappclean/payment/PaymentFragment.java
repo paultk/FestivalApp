@@ -946,34 +946,7 @@ public class PaymentFragment extends Fragment
     }
 
     private void sendRequest(File file) {
-        Call<Map<String, String>> call = mRemoteService.postImage(file);
 
-        call.enqueue(new Callback<Map<String, String>>() {
-            @Override
-            public void onResponse(
-                    final Call<Map<String, String>> call,
-                    final Response<Map<String, String>> response) {
-                final Map<String, String> tasks = response.body();
-                if (tasks != null && !tasks.isEmpty()) {
-//                    getView().showLoadedItems(tasks);
-
-                    Log.d(M_TAG, "onResponse: tasks found as map with size: " + tasks.size());
-                    for (Object item : tasks.values()) {
-                        Log.d(M_TAG, item.toString());
-                    }
-                } else {
-                    Log.d(M_TAG, "onResponse: no tasks found");
-                }
-            }
-
-            @Override
-            public void onFailure(
-                    final Call<Map<String, String>> call,
-                    final Throwable t) {
-//                getView().showErrorLoading();
-                Log.e(M_TAG, "onResume: failed to find SensorData", t);
-            }
-        });
     }
 
     private void showConfirmDialog(String title, String message) {

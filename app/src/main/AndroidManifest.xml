@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera2.full" />
@@ -33,7 +34,11 @@
             android:value="@string/api_key" />
 
         <activity android:name=".home_screen.HomeScreenActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".checklist.CheckListActivity"
@@ -57,9 +62,7 @@
             <meta-data android:name="com.google.android.apps.drive.APP_ID" android:value="id=festivalapp-189421" />
             <intent-filter>
                 <action android:name="com.google.android.apps.drive.DRIVE_OPEN" />
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
                 <data android:mimeType="application/vnd.google-apps.drive-sdk.1234567890" />
                 <data android:mimeType="image/png" />
                 <data android:mimeType="image/jpeg" />
